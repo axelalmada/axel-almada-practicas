@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Salida de Notebooks</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #3a4f63;
+            --secondary-color: #2c3e50;
+            --background-color: #f5f7fa;
+            --input-background: #f0f4f8;
+            --input-focus: #e0e7ff;
+            --text-color: #333;
+            --shadow-color: rgba(0,0,0,0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            background: linear-gradient(135deg, var(--background-color) 0%, #c3cfe2 100%);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            background-image: url('fondo.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            max-width: 500px;
+            width: 100%;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px var(--shadow-color);
+        }
+
+        h2 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: 300;
+            font-size: 2.5em;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--primary-color);
+            font-weight: 500;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        input[type="time"],
+        input[type="number"] {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            background-color: var(--input-background);
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="date"]:focus,
+        input[type="time"]:focus,
+        input[type="number"]:focus {
+            background-color: var(--input-focus);
+            box-shadow: 0 0 0 2px var(--primary-color);
+            outline: none;
+        }
+
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            width: 100%;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 20px;
+        }
+
+        .btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px var(--shadow-color);
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Gestión de Salida de Notebooks</h2>
+        <form method="POST" action="alta.php" id="salidaForm">
+            <div class="form-group">
+                <label for="fecha">Fecha:</label>
+                <input type="date" id="fecha" name="fecha" required>
+            </div>
+
+            <div class="form-group">
+                <label for="hora">Hora:</label>
+                <input type="time" id="hora" name="hora" required>
+            </div>
+
+            <div class="form-group">
+                <label for="profesorResponsable">Profesor Responsable:</label>
+                <input type="text" id="profesorResponsable" name="profesorResponsable" required>
+            </div>
+
+            <div class="form-group">
+                <label for="curso">Curso:</label>
+                <input type="text" id="curso" name="curso" required>
+            </div>
+
+            <div class="form-group">
+                <label for="numeroComputadoras">Número de Computadoras:</label>
+                <input type="number" id="numeroComputadoras" name="numeroComputadoras" required min="1" max="100">
+            </div>
+
+            <div class="form-group">
+                <label for="numeroCargadores">Número de Cargadores:</label>
+                <input type="number" id="numeroCargadores" name="numeroCargadores" required min="1" max="100">
+            </div>
+
+            <button type="submit" class="btn">Registrar Salida</button>
+        </form>
+        <button onclick="window.location.href='index.html'" class="btn">Volver</button>
+    </div>
+
+    <script>
+        document.getElementById('salidaForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            if (validateForm()) {
+                this.submit();
+            }
+        });
+
+        function validateForm() {
+            var fecha = document.getElementById('fecha').value;
+            var hora = document.getElementById('hora').value;
+            var profesor = document.getElementById('profesorResponsable').value;
+            var curso = document.getElementById('curso').value;
+            var computadoras = document.getElementById('numeroComputadoras').value;
+            var cargadores = document.getElementById('numeroCargadores').value;
+
+            if (!fecha || !hora || !profesor || !curso || !computadoras || !cargadores) {
+                alert('Por favor, complete todos los campos.');
+                return false;
+            }
+
+            var fechaActual = new Date();
+            var fechaIngresada = new Date(fecha + 'T' + hora);
+            if (fechaIngresada < fechaActual) {
+                alert('La fecha y hora ingresadas no pueden ser anteriores a la fecha y hora actual.');
+                return false;
+            }
+
+            return true;
+        }
+
+        function sanitizeInput(input) {
+            return input.replace(/[&<>"']/g, function(m) {
+                return {
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    '"': '&quot;',
+                    "'": '&#039;'
+                }[m];
+            });
+        }
+
+        document.getElementById('profesorResponsable').addEventListener('input', function(e) {
+            this.value = sanitizeInput(this.value);
+        });
+
+        document.getElementById('curso').addEventListener('input', function(e) {
+            this.value = sanitizeInput(this.value);
+        });
+    </script>
+</body>
+</html>
